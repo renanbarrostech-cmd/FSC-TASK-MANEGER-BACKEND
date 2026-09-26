@@ -28,7 +28,6 @@ app.get("/tasks/:id", async (req, res) => {
         if (!task) {
             return res.status(404).send("Essa tarefa não foi encontrada.");
         }
-
         return res.status(200).send(task);
     } catch (error) {
         res.status(500).send(error.message);
@@ -44,6 +43,34 @@ app.post("/tasks", async (req, res) => {
         res.status(201).send(newTask);
     } catch (error) {
         res.status(500).send(error.message);
+    }
+});
+
+app.patch("/tasks/:id", async (req, res) => {
+    try {
+        const taskId = req.params.id;
+        const taskData = req.body;
+
+        const taskToUpdate = await TaskModel.findById(taskId);
+
+        const allowedUpdates = ["isCompleted", "description"];
+        const requestedUpdates = Object.keys(taskData);
+
+        for (update of requestedUpdates) {
+            if (allowedUpdates.includes(update)) {
+                taskToUpdate[update] = taskData[update];
+            } else {
+                return res
+                    .status(500)
+                    .send("um ou mais campos inseridos não são editaveis!");
+            }
+        }
+
+        await taskToUpdate.save();
+
+        return res.status(200).send(taskToUpdate);
+    } catch (error) {
+        return res.status(500).send(error.message);
     }
 });
 
