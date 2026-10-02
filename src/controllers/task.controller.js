@@ -6,7 +6,7 @@ class TaskController {
         this.res = res;
     }
 
-    async getTasks() {
+    async getAll() {
         try {
             const task = await TaskModel.find({});
             this.res.status(200).send(task);
@@ -15,7 +15,7 @@ class TaskController {
         }
     }
 
-    async getTaskById() {
+    async getById() {
         try {
             const taskId = this.params.id;
     
@@ -27,6 +27,18 @@ class TaskController {
             return this.status(200).send(task);
         } catch (error) {
             this.status(500).send(error.message);
+        }
+    }
+
+    async create() {
+        try {
+            const newTask = new TaskModel(req.body);
+    
+            await newTask.save();
+    
+            res.status(201).send(newTask);
+        } catch (error) {
+            res.status(500).send(error.message);
         }
     }
 }
