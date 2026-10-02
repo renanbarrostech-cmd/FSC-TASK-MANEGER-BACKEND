@@ -41,6 +41,34 @@ class TaskController {
             this.res.status(500).send(error.message);
         }
     }
+
+    async update() {
+        try {
+            const taskId = this.req.params.id;
+            const taskData = this.req.body;
+    
+            const taskToUpdate = await TaskModel.findById(taskId);
+    
+            const allowedUpdates = ["isCompleted", "description"];
+            const requestedUpdates = Object.keys(taskData);
+    
+            for (const update of requestedUpdates) {
+                if (allowedUpdates.includes(update)) {
+                    taskToUpdate[update] = taskData[update];
+                } else {
+                    return this.res
+                        .status(500)
+                        .send("um ou mais campos inseridos não são editaveis!");
+                }
+            }
+    
+            await taskToUpdate.save();
+    
+            this.res.status(200).send(taskToUpdate);
+        } catch (error) {
+            this.res.status(500).send(error.message);
+        }
+    }
 }
 
 module.exports = TaskController;
