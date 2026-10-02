@@ -32,13 +32,13 @@ class TaskController {
 
     async create() {
         try {
-            const newTask = new TaskModel(req.body);
+            const newTask = new TaskModel(this.req.body);
     
             await newTask.save();
     
-            res.status(201).send(newTask);
+            this.res.status(201).send(newTask);
         } catch (error) {
-            res.status(500).send(error.message);
+            this.res.status(500).send(error.message);
         }
     }
 }
